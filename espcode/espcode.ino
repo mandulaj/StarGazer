@@ -47,7 +47,7 @@ Servo servoPitch;
 
 
 int realAzimuth = 0;
-
+int rollIndex = 0;
 
 
 int azimuth = 0;
@@ -68,7 +68,7 @@ void setup()
     
     
     servoPitch.write(90);
-    servoRoll.write(90);
+    servoRoll.write(180);
     
     delay(10);
 
@@ -101,9 +101,12 @@ void loop(){
   //Serial.println(azimuth);
 
   serialRead();
-  setPosition();
+  
+  if(millis() %  10 == 0){
+    setPosition();
+  }
   WiFiClient client = server.available();   // listen for incoming clients
-  Serial.println(realAzimuth);
+  //Serial.println(realAzimuth);
   
   if (client) {                             // if you get a client,
     Serial.println("New Client.");           // print a message out the serial port
@@ -196,37 +199,44 @@ void setPosition(){
   }
   
   
-  int diff = angleDiff(azimuth, realAzimuth);  
+  int diff = azimuth/2 - rollIndex;
+
   
-  if(diff > 20) {
-    servoRoll.write(100); // Must be big 
+  if(diff > 1) {
+    rollIndex++;
     //delay(10);
     //servoRoll.write(90);
     //delay(100);
-  }else if(diff < -20) {
-    servoRoll.write(80);
+  }else if(diff < -1) {
+    rollIndex--;
     //delay(10);
     //servoRoll.write(90);
     //delay(100);
-  } else {
-    servoRoll.write(90);
-  }
+  } 
+  
+  
+  servoRoll.write(180 - rollIndex);
+  
+  
   
 }
 
 
 void serialRead(){
-  static String buffer = "";
-  if(Serial2.available()){
+  String buffer = "";
+  while(Serial2.available()){
     char c = Serial2.read();
     if(c == '\n'){
-      realAzimuth = buffer.toInt();
-      buffer = "";
+      if(buffer.toInt() != 0)
+        realAzimuth =  buffer.toInt();
+      return;
     } else {
       buffer += c;
     }
   }
+  return;
 }
+
 
 
 
