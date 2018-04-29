@@ -25,6 +25,8 @@ ported for sparkfun esp32
  
  */
 
+
+
 #include <WiFi.h>
 #include <Servo.h>
 #include <Wire.h>
@@ -47,6 +49,7 @@ Servo servoPitch;
 int realAzimuth = 0;
 
 
+
 int azimuth = 0;
 int altitude = 0;
 int laser = 0;
@@ -65,7 +68,7 @@ void setup()
     
     
     servoPitch.write(90);
-    servoRoll.write(95);
+    servoRoll.write(90);
     
     delay(10);
 
@@ -96,9 +99,10 @@ void setup()
 
 void loop(){
   //Serial.println(azimuth);
-  WiFiClient client = server.available();   // listen for incoming clients
+
   serialRead();
   setPosition();
+  WiFiClient client = server.available();   // listen for incoming clients
   Serial.println(realAzimuth);
   
   if (client) {                             // if you get a client,
@@ -173,15 +177,6 @@ void loop(){
         } else if (c != '\r') {  // if you got anything else but a carriage return character,
           currentLine += c;      // add it to the end of the currentLine
         }
-        
-
-        // Check to see if the client request was "GET /H" or "GET /L":
-        if (currentLine.endsWith("GET /H")) {
-                        // GET /H turns the LED on
-        }
-        if (currentLine.endsWith("GET /L")) {
-          digitalWrite(5, LOW);                // GET /L turns the LED off
-        }
       }
     }
     // close the connection:
@@ -203,10 +198,16 @@ void setPosition(){
   
   int diff = angleDiff(azimuth, realAzimuth);  
   
-  if(diff > 10) {
+  if(diff > 20) {
     servoRoll.write(100); // Must be big 
-  } else if(diff < -10) {
-    servoRoll.write(80); 
+    //delay(10);
+    //servoRoll.write(90);
+    //delay(100);
+  }else if(diff < -20) {
+    servoRoll.write(80);
+    //delay(10);
+    //servoRoll.write(90);
+    //delay(100);
   } else {
     servoRoll.write(90);
   }
