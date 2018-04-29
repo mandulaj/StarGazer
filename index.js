@@ -27,6 +27,7 @@ var urlcache = {
   "neptun":"https://in-the-sky.org//data/object.php?id=P8",
   "pluto":"https://in-the-sky.org/data/object.php?id=A134340",
   "sun": "https://in-the-sky.org//data/object.php?id=1",
+  "son": "https://in-the-sky.org//data/object.php?id=1",
   "moon":"https://in-the-sky.org//data/object.php?id=P301"
 }
 
