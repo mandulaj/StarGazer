@@ -80,6 +80,10 @@ setInterval(function(){
         var time = new Date();
        
        var planet  = data["object"].toLowerCase();
+       if(planet == "stop" || planet =="Stop" || planet== "STOP"){
+         sendToESP({alt:-90, az: 0, laser: 0});
+         return;
+       }
        
        if(typeof urlcache[planet] === "string"){
          scrapeObject(urlcache[planet], (err, {data})=>{
@@ -135,7 +139,11 @@ function scrapeObject(url, cb){
 
 
 function sendToESP(data, cb){
-  http.get(options.host+"/azim=" + Math.floor(data.az) + "&alt=" + Math.floor(data.alt) + "&laser=1", cb);
+  var laser = 1;
+  if(typeof data.laser != "undefined" ){
+    laser = data.laser
+  }
+  http.get(options.host+"/azim=" + Math.floor(data.az) + "&alt=" + Math.floor(data.alt) + "&laser=" + laser, cb);
 }
 
 
